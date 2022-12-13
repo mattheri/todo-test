@@ -30,6 +30,38 @@ class AuthService {
 		return localStorage.removeItem(this.tokenKey);
 	}
 
+	async authenticate() {
+		try {
+			const token = this.getToken();
+			const endpoint = "authenticate";
+
+			if (!token) return null;
+
+			const response = await fetch(`${this.url}/${endpoint}`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": this.apiKey
+				},
+				body: JSON.stringify({ token }),
+			});
+
+			if (!response.ok) throw new Error(response.statusText);
+
+			const json = await response.json();
+
+			if (json.success) {
+				this.setToken(json.data.token);
+				this.setUserId(json.data.user._id);
+			}
+
+			return json;
+
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
 	async login(email, password) {
 		const endpoint = "loginWithPassword";
 

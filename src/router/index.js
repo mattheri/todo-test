@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
+import AuthService from '../services/auth-service'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,5 +38,20 @@ const router = createRouter({
     }
   ]
 })
+
+const authService = new AuthService()
+
+router.beforeEach(async (to) => {
+  const routes = [
+    { name: 'login' },
+    { name: 'register' },
+  ]
+
+  if (routes.every(route => route.name !== to.name)) {
+    if (!(await authService.authenticate())) {
+      return { name: 'login' };
+    }
+  }
+});
 
 export default router
