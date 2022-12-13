@@ -11,7 +11,6 @@ onMounted(getTodos);
 </script>
 
 <template>
-  <div class="todos">
-    {{ todos }}
-  </div>
+  <pre>{{ todos }}</pre>
+  <div v-for="todo in todos" class="todos"></div>
 </template>
